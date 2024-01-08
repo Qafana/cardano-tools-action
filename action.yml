@@ -1,0 +1,8 @@
+name: 'Add cardano tools'
+description: 'Add cardano-tools to your workflow (cardano-cli, cardano-node, cardano-address)'
+branding:
+    icon: "bell"
+    color: "green"
+runs:
+  using: 'node18'
+  main: 'dist/index.js'
