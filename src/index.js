@@ -3,5 +3,5 @@ import { downloadLatestRelease, unpackLatestRelease, appendToGitHubPath } from '
 
 dotenv.config();
 await downloadLatestRelease();
-await unpackLatestRelease();
-await appendToGitHubPath('./bins');
+const fullPath = await unpackLatestRelease();
+await appendToGitHubPath(fullPath);

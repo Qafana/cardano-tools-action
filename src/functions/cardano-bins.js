@@ -67,6 +67,8 @@ export const unpackLatestRelease = async () => {
         console.error(`Error occurred while unpacking: ${error}`);
         throw error;
     }
+    const fullPath = path.resolve(dir, file_name.replace(/\.tar\.gz$/, ''));
+    return `${fullPath}/`;
 };
 export const appendToGitHubPath = async (directory) => {
     try {
