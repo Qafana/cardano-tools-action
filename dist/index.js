@@ -26825,6 +26825,7 @@ const unpackLatestRelease = async () => {
         throw error;
     }
     const fullPath = external_path_.resolve(dir, file_name.replace(/\.tar\.gz$/, ''));
+    console.log(`Unpacked to ${fullPath}`);
     return `${fullPath}/`;
 };
 const appendToGitHubPath = async (directory) => {
@@ -26832,7 +26833,7 @@ const appendToGitHubPath = async (directory) => {
     const path = process.env['GITHUB_WORKSPACE'];
     console.log(`GITHUB_WORKSPACE: ${path}`);
     try {
-        core.addPath(`${path}/bins`);
+        core.addPath(`${path}`);
     }
     catch (error) {
         console.error('Error occurred:', error);
