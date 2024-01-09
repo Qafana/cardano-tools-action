@@ -68,6 +68,7 @@ export const unpackLatestRelease = async () => {
         throw error;
     }
     const fullPath = path.resolve(dir, file_name.replace(/\.tar\.gz$/, ''));
+    console.log(`Unpacked to ${fullPath}`);
     return `${fullPath}/`;
 };
 export const appendToGitHubPath = async (directory) => {
