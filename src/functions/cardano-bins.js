@@ -71,10 +71,13 @@ export const unpackLatestRelease = async () => {
     return `${fullPath}/`;
 };
 export const appendToGitHubPath = async (directory) => {
+    console.log(`Appending ${directory} to GITHUB_PATH`);
+    const path = process.env['GITHUB_WORKSPACE'];
+    console.log(`GITHUB_WORKSPACE: ${path}`);
     try {
-        const command = `echo "${directory}" >> $GITHUB_PATH`;
+        const command = `echo "CARDANO_PATH=${path}/bins" >> $GITHUB_PATH`;
         await exec(command);
-        console.log(`Appended ${directory} to GITHUB_PATH`);
+        console.log(`Command executed: ${command}`);
     }
     catch (error) {
         console.error('Error occurred:', error);
