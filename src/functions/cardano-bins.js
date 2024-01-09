@@ -79,4 +79,3 @@ export const appendToGitHubPath = async (directory) => {
         throw error;
     }
 };
-//# sourceMappingURL=cardano-bins.js.map
