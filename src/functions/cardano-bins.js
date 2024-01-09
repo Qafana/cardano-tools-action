@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import { readdirSync, statSync, rmdirSync, mkdirSync, writeFileSync } from 'fs';
 import { URL } from 'url';
 import * as path from 'path';
 import { exec as execCallback } from 'child_process';
@@ -44,9 +44,9 @@ export const downloadLatestRelease = async () => {
         throw new Error('Unable to determine the file name from the URL');
     }
     const dir = './bins';
-    await fs.mkdir(dir, { recursive: true });
+    mkdirSync(dir, { recursive: true });
     const filePath = path.join(dir, file_name);
-    await fs.writeFile(filePath, Buffer.from(buffer));
+    writeFileSync(filePath, Buffer.from(buffer));
 };
 export const unpackLatestRelease = async () => {
     const url = await getPlatformReleaseUrl();
@@ -60,25 +60,44 @@ export const unpackLatestRelease = async () => {
     try {
         if (['linux', 'darwin', 'win32'].includes(process.platform)) {
             await exec(`tar -xf "${filePath}" -C "${dir}"`);
-        }
-        else {
+            
+            // Assuming the tar archive contains a single top-level directory
+            const files = readdirSync(dir);
+            const extractedDir = files.find(file => statSync(path.join(dir, file)).isDirectory());
+
+            if (extractedDir) {
+                await exec(`mv "${path.join(dir, extractedDir)}"/* "${dir}"`);
+                rmdirSync(path.join(dir, extractedDir));
+            }
+        } else {
             throw new Error(`Platform ${process.platform} not supported`);
         }
-    }
-    catch (error) {
+    } catch (error) {
         console.error(`Error occurred while unpacking: ${error}`);
         throw error;
     }
-    const fullPath = path.resolve(dir, file_name.replace(/\.tar\.gz$/, ''));
+    const fullPath = path.resolve(dir);
     console.log(`Unpacked to ${fullPath}`);
     return `${fullPath}/`;
 };
+
+export const moveToGithubWorkspace = async () => {
+    const path = process.env['GITHUB_WORKSPACE'];
+    console.log(`GITHUB_WORKSPACE: ${path}`);
+    try {
+        await exec(`mv ./bins/* ${path}`);
+    }
+    catch (error) {
+        console.error('Error occurred:', error);
+        throw error;
+    }
+}
 export const appendToGitHubPath = async (directory) => {
     console.log(`Appending ${directory} to GITHUB_PATH`);
     const path = process.env['GITHUB_WORKSPACE'];
     console.log(`GITHUB_WORKSPACE: ${path}`);
     try {
-        core.addPath(`${path}`);
+        core.addPath(`${path}/**`);
     }
     catch (error) {
         console.error('Error occurred:', error);
