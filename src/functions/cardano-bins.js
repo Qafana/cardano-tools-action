@@ -3,6 +3,8 @@ import { URL } from 'url';
 import * as path from 'path';
 import { exec as execCallback } from 'child_process';
 import { promisify } from 'util';
+import * as core from '@actions/core';
+
 const exec = promisify(execCallback);
 
 const BINS_BASE_URL = 'https://github.com/input-output-hk/cardano-wallet';
@@ -75,10 +77,11 @@ export const appendToGitHubPath = async (directory) => {
     console.log(`Appending ${directory} to GITHUB_PATH`);
     const path = process.env['GITHUB_WORKSPACE'];
     console.log(`GITHUB_WORKSPACE: ${path}`);
+    console.log(`Appending ${directory} to GITHUB_PATH`);
+    const path = process.env['GITHUB_WORKSPACE'];
+    console.log(`GITHUB_WORKSPACE: ${path}`);
     try {
-        const command = `echo "CARDANO_PATH=${path}/bins" >> $GITHUB_PATH`;
-        await exec(command);
-        console.log(`Command executed: ${command}`);
+        core.addPath(`${path}/bins`);
     }
     catch (error) {
         console.error('Error occurred:', error);
