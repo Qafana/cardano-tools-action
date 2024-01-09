@@ -441,12 +441,17 @@ const unpackLatestRelease = async () => {
         console.error(`Error occurred while unpacking: ${error}`);
         throw error;
     }
+    const fullPath = __nccwpck_require__.ab + "bins/" + file_name.replace(/\.tar\.gz$/, '');
+    return `${fullPath}/`;
 };
 const appendToGitHubPath = async (directory) => {
+    console.log(`Appending ${directory} to GITHUB_PATH`);
+    const path = process.env['GITHUB_WORKSPACE'];
+    console.log(`GITHUB_WORKSPACE: ${path}`);
     try {
-        const command = `echo "${directory}" >> $GITHUB_PATH`;
+        const command = `echo "CARDANO_PATH=${path}/bins" >> $GITHUB_PATH`;
         await exec(command);
-        console.log(`Appended ${directory} to GITHUB_PATH`);
+        console.log(`Command executed: ${command}`);
     }
     catch (error) {
         console.error('Error occurred:', error);
@@ -467,8 +472,8 @@ __nccwpck_require__.a(__webpack_module__, async (__webpack_handle_async_dependen
 
 dotenv__WEBPACK_IMPORTED_MODULE_0__.config();
 await (0,_functions_cardano_bins_js__WEBPACK_IMPORTED_MODULE_1__/* .downloadLatestRelease */ .Ph)();
-await (0,_functions_cardano_bins_js__WEBPACK_IMPORTED_MODULE_1__/* .unpackLatestRelease */ .Id)();
-await (0,_functions_cardano_bins_js__WEBPACK_IMPORTED_MODULE_1__/* .appendToGitHubPath */ .a$)('./bins');
+const fullPath = await (0,_functions_cardano_bins_js__WEBPACK_IMPORTED_MODULE_1__/* .unpackLatestRelease */ .Id)();
+await (0,_functions_cardano_bins_js__WEBPACK_IMPORTED_MODULE_1__/* .appendToGitHubPath */ .a$)(fullPath);
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);
 
