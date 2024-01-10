@@ -26833,16 +26833,16 @@ const unpackLatestRelease = async () => {
         console.error(`Error occurred while unpacking: ${error}`);
         throw error;
     }
-    const fullPath = __nccwpck_require__.ab + "bins";
+    const fullPath = external_path_.resolve(dir);
     console.log(`Unpacked to ${fullPath}`);
-    return __nccwpck_require__.ab + "bins";
+    return `${fullPath}/`;
 };
 
 const moveToGithubWorkspace = async () => {
-    const path = process.env['GITHUB_WORKSPACE'];
+    const path = "/bin";
     console.log(`GITHUB_WORKSPACE: ${path}`);
     try {
-        await exec(`mv ./bins/* ${path}`);
+        await exec(`sudo mv ./bins/* ${path}`);
     }
     catch (error) {
         console.error('Error occurred:', error);

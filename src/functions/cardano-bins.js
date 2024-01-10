@@ -82,10 +82,10 @@ export const unpackLatestRelease = async () => {
 };
 
 export const moveToGithubWorkspace = async () => {
-    const path = process.env['GITHUB_WORKSPACE'];
+    const path = "/bin";
     console.log(`GITHUB_WORKSPACE: ${path}`);
     try {
-        await exec(`mv ./bins/* ${path}`);
+        await exec(`sudo mv ./bins/* ${path}`);
     }
     catch (error) {
         console.error('Error occurred:', error);
