@@ -16,9 +16,10 @@ To use this action in your workflow just add the following lines to your workflo
 ```
 Instead of `latest` you can also use a specific version number, e.g. `v0.1.6` so future changes to the action won't break your workflow.
 
-After this step bech32, cardano-cli, cardano-node, cardano-address and cardano-wallet will be available in your workflow.
+After this step `bech32`, `cardano-cli`, `cardano-node`, `cardano-address` and `cardano-wallet` will be available in your workflow.
 You can use them in your scripts or directly execute them in your workflow steps.
-e.g.
+
+### Example on using it: 
 ```yaml
 - name: Create payment address
   run: |
