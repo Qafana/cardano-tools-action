@@ -3,11 +3,10 @@ import { URL } from 'url';
 import * as path from 'path';
 import { exec as execCallback } from 'child_process';
 import { promisify } from 'util';
-import * as core from '@actions/core';
 
 const exec = promisify(execCallback);
 
-const BINS_BASE_URL = 'https://github.com/input-output-hk/cardano-wallet';
+const BINS_BASE_URL = 'https://github.com/cardano-foundation/cardano-wallet';
 
 const get_latest_release_tag = async () => {
     const response = await fetch(`${BINS_BASE_URL}/releases/latest`, { method: 'GET',
@@ -16,6 +15,7 @@ const get_latest_release_tag = async () => {
     const data = await response.json();
     return data.tag_name;
 };
+
 const getPlatformReleaseUrl = async () => {
     const platform = process.platform;
     const tag = await get_latest_release_tag();
@@ -76,12 +76,9 @@ export const unpackLatestRelease = async () => {
         console.error(`Error occurred while unpacking: ${error}`);
         throw error;
     }
-    const fullPath = path.resolve(dir);
-    console.log(`Unpacked to ${fullPath}`);
-    return `${fullPath}/`;
 };
 
-export const moveToGithubWorkspace = async () => {
+export const moveToRunnerBin = async () => {
     const path = "/bin";
     console.log(`GITHUB_WORKSPACE: ${path}`);
     try {
@@ -92,15 +89,3 @@ export const moveToGithubWorkspace = async () => {
         throw error;
     }
 }
-export const appendToGitHubPath = async (directory) => {
-    console.log(`Appending ${directory} to GITHUB_PATH`);
-    const path = process.env['GITHUB_WORKSPACE'];
-    console.log(`GITHUB_WORKSPACE: ${path}`);
-    try {
-        core.addPath(`${path}/**`);
-    }
-    catch (error) {
-        console.error('Error occurred:', error);
-        throw error;
-    }
-};
