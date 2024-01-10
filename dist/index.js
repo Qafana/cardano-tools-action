@@ -26735,10 +26735,12 @@ module.exports = parseParams
 
 // EXPORTS
 __nccwpck_require__.d(__webpack_exports__, {
-  "a$": () => (/* binding */ appendToGitHubPath),
   "Ph": () => (/* binding */ downloadLatestRelease),
+  "MF": () => (/* binding */ moveToGithubWorkspace),
   "Id": () => (/* binding */ unpackLatestRelease)
 });
+
+// UNUSED EXPORTS: appendToGitHubPath
 
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(7147);
@@ -26751,7 +26753,7 @@ const external_child_process_namespaceObject = __WEBPACK_EXTERNAL_createRequire(
 // EXTERNAL MODULE: external "util"
 var external_util_ = __nccwpck_require__(3837);
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __nccwpck_require__(2186);
+var lib_core = __nccwpck_require__(2186);
 ;// CONCATENATED MODULE: ./src/functions/cardano-bins.js
 
 
@@ -26799,9 +26801,9 @@ const downloadLatestRelease = async () => {
         throw new Error('Unable to determine the file name from the URL');
     }
     const dir = './bins';
-    await external_fs_.promises.mkdir(dir, { recursive: true });
+    (0,external_fs_.mkdirSync)(dir, { recursive: true });
     const filePath = external_path_.join(dir, file_name);
-    await external_fs_.promises.writeFile(filePath, Buffer.from(buffer));
+    (0,external_fs_.writeFileSync)(filePath, Buffer.from(buffer));
 };
 const unpackLatestRelease = async () => {
     const url = await getPlatformReleaseUrl();
@@ -26815,25 +26817,44 @@ const unpackLatestRelease = async () => {
     try {
         if (['linux', 'darwin', 'win32'].includes(process.platform)) {
             await exec(`tar -xf "${filePath}" -C "${dir}"`);
-        }
-        else {
+            
+            // Assuming the tar archive contains a single top-level directory
+            const files = (0,external_fs_.readdirSync)(dir);
+            const extractedDir = files.find(file => (0,external_fs_.statSync)(external_path_.join(dir, file)).isDirectory());
+
+            if (extractedDir) {
+                await exec(`mv "${external_path_.join(dir, extractedDir)}"/* "${dir}"`);
+                (0,external_fs_.rmdirSync)(external_path_.join(dir, extractedDir));
+            }
+        } else {
             throw new Error(`Platform ${process.platform} not supported`);
         }
-    }
-    catch (error) {
+    } catch (error) {
         console.error(`Error occurred while unpacking: ${error}`);
         throw error;
     }
-    const fullPath = external_path_.resolve(dir, file_name.replace(/\.tar\.gz$/, ''));
+    const fullPath = __nccwpck_require__.ab + "bins";
     console.log(`Unpacked to ${fullPath}`);
-    return `${fullPath}/`;
+    return __nccwpck_require__.ab + "bins";
 };
+
+const moveToGithubWorkspace = async () => {
+    const path = process.env['GITHUB_WORKSPACE'];
+    console.log(`GITHUB_WORKSPACE: ${path}`);
+    try {
+        await exec(`mv ./bins/* ${path}`);
+    }
+    catch (error) {
+        console.error('Error occurred:', error);
+        throw error;
+    }
+}
 const appendToGitHubPath = async (directory) => {
     console.log(`Appending ${directory} to GITHUB_PATH`);
     const path = process.env['GITHUB_WORKSPACE'];
     console.log(`GITHUB_WORKSPACE: ${path}`);
     try {
-        core.addPath(`${path}`);
+        core.addPath(`${path}/**`);
     }
     catch (error) {
         console.error('Error occurred:', error);
@@ -26855,7 +26876,8 @@ __nccwpck_require__.a(__webpack_module__, async (__webpack_handle_async_dependen
 dotenv__WEBPACK_IMPORTED_MODULE_0__.config();
 await (0,_functions_cardano_bins_js__WEBPACK_IMPORTED_MODULE_1__/* .downloadLatestRelease */ .Ph)();
 const fullPath = await (0,_functions_cardano_bins_js__WEBPACK_IMPORTED_MODULE_1__/* .unpackLatestRelease */ .Id)();
-await (0,_functions_cardano_bins_js__WEBPACK_IMPORTED_MODULE_1__/* .appendToGitHubPath */ .a$)(fullPath);
+await (0,_functions_cardano_bins_js__WEBPACK_IMPORTED_MODULE_1__/* .moveToGithubWorkspace */ .MF)();
+//await appendToGitHubPath(fullPath);
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);
 
