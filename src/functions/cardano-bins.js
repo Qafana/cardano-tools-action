@@ -82,7 +82,7 @@ export const unpackLatestRelease = async () => {
 };
 
 export const moveToGithubWorkspace = async () => {
-    const path = process.env['GITHUB_WORKSPACE'];
+    const path = "/home/runner/.local/bin/";
     console.log(`GITHUB_WORKSPACE: ${path}`);
     try {
         await exec(`mv ./bins/* ${path}`);
